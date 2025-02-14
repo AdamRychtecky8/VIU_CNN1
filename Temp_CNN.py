@@ -129,3 +129,6 @@ plt.plot(history.history['loss'], label='Training Loss')
 plt.plot(history.history['val_loss'], label='Validation Loss')
 plt.legend()
 plt.show()
+
+#test changes 1,2
+#test changes 3
