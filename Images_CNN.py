@@ -85,29 +85,38 @@ train_images, test_images, train_labels, test_labels = train_test_split(images, 
 train_images, val_images, train_labels, val_labels = train_test_split(train_images, train_labels, test_size=0.1, random_state=42)
 
 # Build the CNN
+# Build the CNN
 print("Start model")
 model = models.Sequential([
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(400, 400, 1)),
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(image_size, image_size, 1)),
+    layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
+    
     layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
+    
     layers.Conv2D(128, (3, 3), activation='relu'),
+    layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
-    layers.Conv2D(128, (3, 3), activation='relu'),
-    layers.Flatten(),
+    
+    layers.Conv2D(256, (3, 3), activation='relu'),
+    layers.BatchNormalization(),
+    layers.GlobalAveragePooling2D(),  # Use GAP instead of Flatten
     layers.Dense(128, activation='relu'),
-    layers.Dropout(0.5),
+    layers.Dropout(0.4),  # Increased Dropout for better regularization
     layers.Dense(64, activation='relu'),
-    layers.Dense(2, activation='sigmoid')
+    layers.Dense(2)  # Output: 2 for x, y position
 ])
 
 # Compile the model
 print("Compile model")
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss='mean_squared_error')
 
+
 # Train the model
 print("train model")
-history = model.fit(train_images, train_labels, epochs=20, batch_size=32, validation_data=(val_images, val_labels))
+history = model.fit(train_images, train_labels, epochs=10, batch_size=32, validation_data=(val_images, val_labels))
 
 # Evaluate the model
 print("evaluate model")
